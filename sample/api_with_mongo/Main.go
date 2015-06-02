@@ -11,5 +11,7 @@ func main() {
 
 	openDbConnection()
 
+	loadBeers()
+
 	log.Fatal(http.ListenAndServe(":7777", router))
 }
