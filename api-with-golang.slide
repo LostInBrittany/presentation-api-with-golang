@@ -27,6 +27,7 @@ Using net/http packet
 .play sample/web_server.go
 .link http://127.0.0.1:7777/hello http://127.0.0.1:7777/hello
 
+
 * Handling requests
 
 With the `http` package from the standard library we have a standard router (ou _mux_, as request multiplexer): [[http://golang.org/pkg/net/http/#ServeMux][`ServerMux`]]
@@ -37,11 +38,13 @@ Using [[http://golang.org/pkg/net/http/#HandleFunc][`http.HandleFunc`]] or [[htt
 
 .code sample/standard_router-01.go
 
+
 * Using `http.Handle` 
 
 `http.Handle` only need a type that implements [[http://golang.org/pkg/net/http/#Handler][`http.Handler`]]:
 
 .code sample/http_handler.go
+
 
 * Using `http.Handle` 
 
@@ -50,6 +53,7 @@ use the `http.Handle` function with that type:
 
 .play sample/standard_router-02.go
 .link http://127.0.0.1:7777/hello http://127.0.0.1:7777/hello
+
 
 * Alternative routers
 
@@ -62,11 +66,98 @@ The most popular are:
 - [[https://github.com/julienschmidt/httprouter][httprouter]] by [[https://github.com/julienschmidt/][Julien Schmidt]]
 - [[https://github.com/go-martini/martini][Martini]]  by [[https://codegangsta.io][Code Gangsta]]
 
+
 * Using Gorilla Toolkit's Mux router
 
 Package gorilla/mux implements a request router and dispatcher, 
-in a Sinatra-like style, more flexible than the standard ones.
+more flexible than the standard ones.
 
 .play sample/gorilla-01.go /START OMIT/,/END OMIT/
 .link http://127.0.0.1:7777/hello/world 
 
+
+* Creating a basic model
+
+In Go, a struct will typically serve as your model
+
+.code sample/basic_model-01.go
+
+
+* Sending back JSON
+
+Let's begin by adding some beers to our model:
+
+.code sample/adding_beers.go 0,$/START OMIT/,/END OMIT/
+
+
+* Sending back JSON
+
+And send it back to client when `/` URL is called:
+
+.play sample/sending_back_JSON-01.go /START OMIT/,/END OMIT/
+.link http://127.0.0.1:7777/
+
+
+The [[http://golang.org/pkg/encoding/json/][`encoding/json`]] package allows to easily deal with JSON transforms
+
+
+* But uppercased JSON keys are ugly
+
+They indeed are... 
+
+Let's redefine our model using [[https://golang.org/ref/spec#Struct_types][struct tags]]
+
+.code sample/basic_model-02.go
+
+Then the generated JSON is cleaner:
+
+  [{"name":"Affligem Blond","id":"AffligemBlond","img":"img/AffligemBlond.jpg","description": [...]
+
+
+* What a mess... Let's split it!
+
+We can separate things in several files:
+
+*Beer.go*
+
+.code sample/api_without_mongo/Beer.go  /START OMIT/,/END OMIT/
+
+
+* What a mess... Let's split it!
+
+*Handlers.go*
+
+.code sample/api_without_mongo/Handlers.go  /START OMIT/,/END OMIT/
+
+
+* What a mess... Let's split it!
+
+*Router.go*
+
+.code sample/api_without_mongo/Router.go  /START OMIT/,/END OMIT/
+
+
+* What a mess... Let's split it!
+
+And last but not least, *Main.go*
+
+.code sample/api_without_mongo/Main.go
+
+
+* We need a database now, how about MongoDB
+
+Lot of Golang drivers for MongoDB. The most popular is [[https://labix.org/mgo][mgo]]
+
+Installing mgo may be done via the usual go get procedure:
+
+  go get gopkg.in/mgo.v2
+
+
+* Using mgo
+
+.play sample/MongoWriter.go /START OMIT/,/END OMIT/
+  
+
+* Using MongoDB in a DAO for our API
+
+.code sample/DAO_detail.go 
