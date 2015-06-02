@@ -1,0 +1,72 @@
+Do you want robust, quick and easy to code APIs? Use Go!
+GDG Finistere
+2 Jun 2015
+Tags: GDGFinistere, Golang
+
+Horacio Gonzalez
+Developer at Cityzen Data
+horacio.gonzalez@gmail.com
+@LostInBrittany
+
+* Speakers
+
+.image images/lib_avatar_with_pencil.png 300 600
+
+.link https://twitter.com/LostInBrittany @LostInBrittany
+
+Cityzen Data
+http://cityzendata.com
+
+Spaniard lost in Brittany, developer, dreamer and all-around geek
+
+
+* A simple HTTP server
+
+Using net/http packet
+
+.play sample/web_server.go
+.link http://127.0.0.1:7777/hello http://127.0.0.1:7777/hello
+
+* Handling requests
+
+With the `http` package from the standard library we have a standard router (ou _mux_, as request multiplexer): [[http://golang.org/pkg/net/http/#ServeMux][`ServerMux`]]
+
+Using [[http://golang.org/pkg/net/http/#HandleFunc][`http.HandleFunc`]] or [[http://golang.org/pkg/net/http/#Handle][`http.Handle`]] functions we register a pattern into the router and we assign it a funtion that will deal with the HTTP request and write the answer
+
+`http.HandleFunc` requieres a function of [[http://golang.org/pkg/net/http/#ResponseWriter][`http.ResponseWriter`]] and [[http://golang.org/pkg/net/http/#Request][`http.Request`]]
+
+.code sample/standard_router-01.go
+
+* Using `http.Handle` 
+
+`http.Handle` only need a type that implements [[http://golang.org/pkg/net/http/#Handler][`http.Handler`]]:
+
+.code sample/http_handler.go
+
+* Using `http.Handle` 
+
+As `http.Handler` is an interface, you can implement it with your own types and
+use the `http.Handle` function with that type:
+
+.play sample/standard_router-02.go
+.link http://127.0.0.1:7777/hello http://127.0.0.1:7777/hello
+
+* Alternative routers
+
+There are many alternative routers that cover almost all common ways 
+to route URL in sinatra-like toolboxes. 
+
+The most popular are: 
+
+- [[http://www.gorillatoolkit.org/pkg/mux][Mux router]]  from [[http://www.gorillatoolkit.org/][Gorilla Toolkit]]
+- [[https://github.com/julienschmidt/httprouter][httprouter]] by [[https://github.com/julienschmidt/][Julien Schmidt]]
+- [[https://github.com/go-martini/martini][Martini]]  by [[https://codegangsta.io][Code Gangsta]]
+
+* Using Gorilla Toolkit's Mux router
+
+Package gorilla/mux implements a request router and dispatcher, 
+in a Sinatra-like style, more flexible than the standard ones.
+
+.play sample/gorilla-01.go /START OMIT/,/END OMIT/
+.link http://127.0.0.1:7777/hello/world 
+
